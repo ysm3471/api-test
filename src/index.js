@@ -1,14 +1,39 @@
 const express = require('express');
 const morgan = require('morgan');
 const routes = require('./routes');
+const mongoose = require('mongoose');
+
+const swaggerOption = require('./swagger/handler');
+const swaggerUI = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
+
+require('dotenv').config();
 
 const app = express();
+
+// MongoDB 연결
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('✅ MongoDB connected'))
+.catch(err => console.error('❌ MongoDB connection error:', err));
+
+const specs = swaggerJsDoc(swaggerOption);
 
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', routes);
+
+app.use("/api-docs",
+  swaggerUI.serve,
+  swaggerUI.setup(specs,{ explorer: true })
+);
+
+const userRouter = require('./db/routes/user');
+app.use('/users', userRouter);
 
 app.get('/', (req, res) => {
   res.json({ ok: true, message: 'Express server is running' });
@@ -27,5 +52,5 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
+  console.log(`Server listening on http://localhost:${PORT}`); 
 });
