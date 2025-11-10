@@ -28,7 +28,7 @@ const swaggerSecurityScheme = {
     type: "http",
     scheme: "bearer",
     bearerFormat: "JWT",
-    description: "JWT 토큰을 입력해주세요.",
+    description: "JWT 토큰을 입력해주세요",
   },
 };
 
