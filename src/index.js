@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const morgan = require('morgan');
 const routes = require('./routes');
 const mongoose = require('mongoose');
@@ -21,6 +22,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 const specs = swaggerJsDoc(swaggerOption);
 
+app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
